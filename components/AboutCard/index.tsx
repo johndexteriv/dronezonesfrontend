@@ -38,7 +38,7 @@ export const AboutCard = React.memo(function ProjectCard() {
                 <TextInfoContent classes={styles} />
                 <form>
                     <Grid container spacing={3}>
-                        <Grid item justify="space-between" xs>
+                        <Grid item xs={12}>
                             <Grid>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tincidunt ligula eget elit aliquet imperdiet. Nunc eget bibendum nisi. Nullam lacinia quam et lectus dictum hendrerit. Vestibulum luctus leo neque. Duis hendrerit gravida urna quis vulputate. Pellentesque maximus suscipit libero ac elementum. Nulla venenatis odio at purus rhoncus vestibulum.</p>
                                 <p>Sed semper, arcu et congue aliquam, tortor justo luctus neque, sit amet hendrerit arcu leo maximus enim. Integer commodo ut nulla malesuada ultrices. Donec est magna, finibus vel elit vel, pharetra euismod nulla. Nam sem ligula, ultrices sed maximus eget, fermentum non nulla. Vestibulum auctor arcu et eros mollis, ut condimentum nibh vestibulum. Vivamus et urna eget augue semper ultricies. Aenean a justo at urna tempor rhoncus et eget leo.</p>
