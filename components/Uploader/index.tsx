@@ -8,6 +8,8 @@ import { useN03TextInfoContentStyles } from '@mui-treasury/styles/textInfoConten
 import { useLightTopShadowStyles } from '@mui-treasury/styles/shadow/lightTop';
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card';
+import FormGroup from '@material-ui/core/FormGroup'
+import TextField from '@material-ui/core/TextField'
 import CardContent from '@material-ui/core/CardContent';
 import BrandCardHeader from '@mui-treasury/components/cardHeader/brand';
 import TextInfoContent from '@mui-treasury/components/content/textInfo';
@@ -15,8 +17,9 @@ import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Modal from '@material-ui/core/Modal'
 
-
+const axios = require('axios')
 Amplify.configure(awsConfig)
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -53,11 +56,20 @@ export const Uploader = React.memo(function ProjectCard() {
     const styles = useN03TextInfoContentStyles();
     const shadowStyles = useLightTopShadowStyles();
     const cardStyles = useStyles();
+    const [userInputData, setUserInputData] = useState<userData>(Object)
     const [name, setName] = useState('')
     const [videoSrc, setVideoSrc] = useState('')
     const [file, setFile] = useState({ type: '', name: '' })
     const [response, setResponse] = useState('')
     const [isUploading, setIsUploading] = useState(null)
+
+    type userData = {
+        name: string,
+        description: string,
+        date: string,
+        region: string 
+    }
+
     const onChange = (vidUpload) => {
         vidUpload.preventDefault()
         if (vidUpload.target.files[0] !== null) {
@@ -65,6 +77,17 @@ export const Uploader = React.memo(function ProjectCard() {
             setName(vidUpload.target.files[0].name)
         }
     }
+
+    const handleUserInputData = (event) => {
+        
+        const {name, value} = event.target;
+        setUserInputData({
+            ...userInputData,
+            [name]: value,
+        })
+    }
+    console.log('these are the user inputs', userInputData);
+
     const onSubmit = (vidUpload) => {
         vidUpload.preventDefault()
         if (file) {
@@ -79,12 +102,23 @@ export const Uploader = React.memo(function ProjectCard() {
                 /* level: 'protected', */
                 contentType: file.type,
             })
-                .then((result) => {
-                    setIsUploading(null)
-                    console.log('name:', name)
-                    setResponse(`Success uploading file: ${name}!`)
-                    // isUploading = false
-                })
+            .then((result) => {
+                setIsUploading(null)
+                console.log('name:', name)
+                setResponse(`Success uploading file: ${name}!`)
+                // isUploading = false
+            })
+            axios({
+                method: "post",
+                url: "https://ulsg7ghjha.execute-api.us-east-1.amazonaws.com/dev/api/addvideo",
+                data: userInputData,
+            }).then((res) => {
+                if (res.status === 200) {
+                    console.log('video data submitted')
+                } else {
+                    console.log('video data not submitted')
+                }
+            })
                 .then(() => {
                     const inputValue = (document.getElementById('file-input') as HTMLInputElement).value = null
                     setFile(null)
@@ -111,6 +145,58 @@ export const Uploader = React.memo(function ProjectCard() {
             <CardContent className={cardStyles.content}>
                 <TextInfoContent classes={styles} />
                 <form onSubmit={(e) => onSubmit(e)}>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={5}>
+                                    <FormGroup>
+                                        <TextField
+                                            id="outlined-search"
+                                            label="Video Name"
+                                            variant="outlined"
+                                            name="name"
+                                            value={userInputData?.name || ""}
+                                            onChange={(e) => handleUserInputData(e)}
+                                        />
+                                    </FormGroup>
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <FormGroup>
+                                        <TextField
+                                            id="outlined-search"
+                                            label="Video Date"
+                                            variant="outlined"
+                                            name="date"
+                                            value={userInputData?.date || ""}
+                                            onChange={(e) => handleUserInputData(e)}
+                                        />
+                                    </FormGroup>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <FormGroup>
+                                        <TextField
+                                            id="outlined-search"
+                                            label="Video Region"
+                                            variant="outlined"
+                                            name="region"
+                                            value={userInputData?.region || ""}
+                                            onChange={(e) => handleUserInputData(e)}
+                                        />
+                                    </FormGroup>
+                                </Grid>
+                                <Grid item xs={7}>
+                                    <FormGroup>
+                                        <TextField
+                                            id="outlined-search"
+                                            label="Description"
+                                            variant="outlined"
+                                            name="description"
+                                            value={userInputData?.description || ""}
+                                            onChange={(e) => handleUserInputData(e)}
+                                        />
+                                    </FormGroup>
+                                </Grid>
+                    </Grid>
+
                     <Grid container spacing={3}>
                         <Grid item xs style={{ marginLeft: "3vw" }} className='video-uploader'>
                             {file ? (<video src={videoSrc} width="400px" />) :
@@ -118,6 +204,9 @@ export const Uploader = React.memo(function ProjectCard() {
                         </Grid>
                         <Grid>
                             <Grid>
+
+                                
+
                                 <label className='video-input'>
                                     <input
                                         style={{ display: 'none' }}
