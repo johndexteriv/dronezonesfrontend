@@ -67,7 +67,8 @@ export const Uploader = React.memo(function ProjectCard() {
         name: string,
         description: string,
         date: string,
-        region: string 
+        region: string
+        url: string 
     }
 
     const onChange = (vidUpload) => {
@@ -86,7 +87,6 @@ export const Uploader = React.memo(function ProjectCard() {
             [name]: value,
         })
     }
-    console.log('these are the user inputs', userInputData);
 
     const onSubmit = (vidUpload) => {
         vidUpload.preventDefault()
@@ -98,6 +98,8 @@ export const Uploader = React.memo(function ProjectCard() {
             const name = randomName.replace("video/", ".")
             const videoURL = `${s3Bucket}${name}`
             console.log('file:', videoURL)
+            const s3URL  = 'rckeeluploadvideobuckettest1113114-dev/public/' + videoURL;
+            setUserInputData({...userInputData, url: s3URL})
             Storage.put(name, file, {
                 /* level: 'protected', */
                 contentType: file.type,
@@ -107,6 +109,7 @@ export const Uploader = React.memo(function ProjectCard() {
                 console.log('name:', name)
                 setResponse(`Success uploading file: ${name}!`)
                 // isUploading = false
+                console.log('User Inputted Data w/ s3url', userInputData)
             })
             axios({
                 method: "post",
